@@ -1,4 +1,5 @@
 use std::mem;
+use crate::first::Link::More;
 
 struct Node {
     elm: i32,
@@ -36,6 +37,16 @@ impl List {
         });
 
         self.head = Link::More(new_node);
+    }
+}
+
+impl Drop for List {
+    fn drop(&mut self) {
+        let mut cur_link = mem::replace(&mut self.head, Link::Empty);
+
+        while let Link::More(mut boxed_node) = cur_link {
+            cur_link = mem::replace(&mut boxed_node.next, Link::Empty);
+        }
     }
 }
 
